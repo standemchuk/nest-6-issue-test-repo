@@ -1,0 +1,988 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API specification for Setel Maintenance service | [swagger.json](swagger.json)",
+    "version": "0.1.0",
+    "title": "Setel Maintenance API"
+  },
+  "basePath": "/api/maintenance",
+  "tags": [
+    {
+      "name": "health",
+      "description": ""
+    },
+    {
+      "name": "maintenance",
+      "description": ""
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "host": "127.0.0.1:3016",
+  "securityDefinitions": {
+    "bearer": {
+      "type": "apiKey",
+      "name": "access-token",
+      "in": "header"
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Check if the application is healthy",
+        "description": "Ping pong endpoint for making sure the application is alive.\n                  Used for healthcheck via orchestration services.",
+        "operationId": "indexHealth",
+        "responses": {
+          "200": {
+            "description": "App is healthy"
+          }
+        },
+        "tags": [
+          "health"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
+    },
+    "/maintenance": {
+      "get": {
+        "summary": "Index maintenance records",
+        "description": "Retrieve all maintenance requests from the DB",
+        "operationId": "indexMaintenanceRecords",
+        "parameters": [
+          {
+            "name": "IndexMaintenanceRecordsInput",
+            "required": true,
+            "in": "body",
+            "description": "Maintenance records filters",
+            "isArray": false,
+            "schema": {
+              "$ref": "#/definitions/IndexMaintenanceRecordsInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of maintenance records",
+            "schema": {
+              "$ref": "#/definitions/IndexMaintenanceRecordsSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "tags": [
+          "maintenance"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      },
+      "post": {
+        "summary": "Schedule maintenance",
+        "description": "Add a record for planned maintenance with an announcement",
+        "operationId": "scheduleMaintenance",
+        "parameters": [
+          {
+            "name": "ScheduleMaintenanceInput",
+            "required": true,
+            "in": "body",
+            "description": "Information for scheduling a maintenance",
+            "isArray": false,
+            "schema": {
+              "$ref": "#/definitions/ScheduleMaintenanceInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Maintenance scheduled",
+            "schema": {
+              "$ref": "#/definitions/ScheduleMaintenanceSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "tags": [
+          "maintenance"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      },
+      "put": {
+        "summary": "Complete maintenance",
+        "description": "Finish maintenance and cancel any planned messages for finishing",
+        "operationId": "completeMaintenance",
+        "parameters": [
+          {
+            "name": "CompleteMaintenanceInput",
+            "required": true,
+            "in": "body",
+            "description": "Maintenance scope",
+            "isArray": false,
+            "schema": {
+              "$ref": "#/definitions/CompleteMaintenanceInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Maintenance completed",
+            "schema": {
+              "$ref": "#/definitions/CompleteMaintenanceSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "No maintenance mode at the moment",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "tags": [
+          "maintenance"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
+    },
+    "/maintenance/system-state": {
+      "get": {
+        "summary": "Read latest system state",
+        "description": "Get latest system state record from the database",
+        "operationId": "readSystemState",
+        "responses": {
+          "200": {
+            "description": "System state",
+            "schema": {
+              "$ref": "#/definitions/ReadSystemStateSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "tags": [
+          "maintenance"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
+    },
+    "/maintenance/vendors": {
+      "post": {
+        "summary": "Toggle vendors maintenance",
+        "description": "Change maintenance state for vendors",
+        "operationId": "toggleVendorsMaintenance",
+        "parameters": [
+          {
+            "name": "ToggleVendorsMaintenanceInput",
+            "required": true,
+            "in": "body",
+            "description": "Vendor toggles",
+            "isArray": false,
+            "schema": {
+              "$ref": "#/definitions/ToggleVendorsMaintenanceInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Vendors maintenance toggled",
+            "schema": {
+              "$ref": "#/definitions/ReadSystemStateSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "tags": [
+          "maintenance"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
+    },
+    "/maintenance/features": {
+      "post": {
+        "summary": "Toggle features maintenance",
+        "description": "Change maintenance state for features",
+        "operationId": "toggleFeaturesMaintenance",
+        "parameters": [
+          {
+            "name": "ToggleFeaturesMaintenanceInput",
+            "required": true,
+            "in": "body",
+            "description": "Feature toggles",
+            "isArray": false,
+            "schema": {
+              "$ref": "#/definitions/ToggleFeaturesMaintenanceInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Features maintenance toggled",
+            "schema": {
+              "$ref": "#/definitions/ReadSystemStateSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "tags": [
+          "maintenance"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
+    },
+    "/maintenance/services": {
+      "post": {
+        "summary": "Toggle service maintenance",
+        "description": "Change maintenance state for a service",
+        "operationId": "toggleServiceMaintenance",
+        "parameters": [
+          {
+            "name": "ToggleServicesMaintenanceInput",
+            "required": true,
+            "in": "body",
+            "description": "Feature toggles",
+            "isArray": false,
+            "schema": {
+              "$ref": "#/definitions/ToggleServicesMaintenanceInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Services maintenance toggled",
+            "schema": {
+              "$ref": "#/definitions/ReadSystemStateSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "tags": [
+          "maintenance"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "IndexMaintenanceRecordsInput": {
+      "type": "object",
+      "properties": {
+        "startDateFrom": {
+          "type": "string",
+          "description": "Maintenance start date range start",
+          "format": "date-time",
+          "example": "2019-02-12T02:39:47.702Z"
+        },
+        "startDateTo": {
+          "type": "string",
+          "description": "Maintenance start date range end",
+          "format": "date-time",
+          "example": "2019-02-12T02:39:47.702Z"
+        },
+        "endDateFrom": {
+          "type": "string",
+          "description": "Maintenance end date range start",
+          "format": "date-time",
+          "example": "2019-02-12T02:39:47.702Z"
+        },
+        "endDateTo": {
+          "type": "string",
+          "description": "Maintenance end date range end",
+          "format": "date-time",
+          "example": "2019-02-12T02:39:47.702Z"
+        },
+        "announcementText": {
+          "type": "string",
+          "description": "Maintenance announcement text",
+          "example": "We are updating the system at the moment. Please stay tuned for updates"
+        }
+      },
+      "required": [
+        "announcementText"
+      ]
+    },
+    "MaintenanceRequestDto": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "description": "Maintenance scope (system wide or app wide)",
+          "enum": [
+            "SystemWide",
+            "Ios",
+            "Android"
+          ]
+        },
+        "startDate": {
+          "type": "string",
+          "description": "Maintenance start date",
+          "format": "date-time",
+          "example": "2019-02-12T02:39:47.702Z"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "Maintenance end date",
+          "format": "date-time",
+          "example": "2019-02-12T02:39:47.702Z"
+        },
+        "announcementText": {
+          "type": "string",
+          "description": "Maintenance announcement text",
+          "example": "We are updating the system at the moment. Please stay tuned for updates"
+        }
+      },
+      "required": [
+        "scope"
+      ]
+    },
+    "IndexMaintenanceRecordsSuccess": {
+      "type": "object",
+      "properties": {
+        "maintenanceRecords": {
+          "type": "array",
+          "description": "Array of maintenance records",
+          "items": {
+            "$ref": "#/definitions/MaintenanceRequestDto"
+          }
+        }
+      },
+      "required": [
+        "maintenanceRecords"
+      ]
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "number"
+        },
+        "message": {
+          "type": "string",
+          "example": "Error message",
+          "default": "Internal Server Error"
+        },
+        "name": {
+          "type": "string",
+          "example": "Error"
+        }
+      }
+    },
+    "FeaturesMaintenanceStateDto": {
+      "type": "object",
+      "properties": {
+        "topUpWithCard": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is top up with card in maintenance mode?"
+        },
+        "topUpWithBank": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is top up with bank in maintenance mode?"
+        },
+        "redeemLoyaltyPoints": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is loyalty points redemption in maintenance mode?"
+        }
+      },
+      "required": [
+        "topUpWithCard",
+        "topUpWithBank",
+        "redeemLoyaltyPoints"
+      ]
+    },
+    "ServicesMaintenanceStateDto": {
+      "type": "object",
+      "properties": {
+        "accounts": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-accounts in maintenance mode?"
+        },
+        "orders": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-orders in maintenance mode?"
+        },
+        "payments": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-payments in maintenance mode?"
+        },
+        "loyalty": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-loyalty in maintenance mode?"
+        },
+        "emails": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-emails in maintenance mode?"
+        },
+        "rewards": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-rewards in maintenance mode?"
+        },
+        "storeOrders": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-store-orders in maintenance mode?"
+        },
+        "stations": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-stations in maintenance mode?"
+        }
+      },
+      "required": [
+        "accounts",
+        "orders",
+        "payments",
+        "loyalty",
+        "emails",
+        "rewards",
+        "storeOrders",
+        "stations"
+      ]
+    },
+    "VendorsMaintenanceStateDto": {
+      "type": "object",
+      "properties": {
+        "pos": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is POS in maintenance mode?"
+        },
+        "kiple": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is Kiple in maintenance mode?"
+        },
+        "cardtrendLms": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is Cardtrend LMS in maintenance mode?"
+        },
+        "silverstreet": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is Silverstreet in maintenance mode?"
+        }
+      },
+      "required": [
+        "pos",
+        "kiple",
+        "cardtrendLms",
+        "silverstreet"
+      ]
+    },
+    "CountrySystemMaintenanceStateDto": {
+      "type": "object",
+      "properties": {
+        "entireSystem": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is entire system in maintenance mode?"
+        },
+        "ios": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is iOS App in maintenance mode"
+        },
+        "android": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is Android app in maintenance mode?"
+        },
+        "features": {
+          "title": "FeaturesMaintenanceStateDto",
+          "allOf": [
+            {
+              "$ref": "#/definitions/FeaturesMaintenanceStateDto"
+            },
+            {
+              "description": "Features Maintenance info"
+            }
+          ]
+        },
+        "services": {
+          "title": "ServicesMaintenanceStateDto",
+          "allOf": [
+            {
+              "$ref": "#/definitions/ServicesMaintenanceStateDto"
+            },
+            {
+              "description": "Features Maintenance info"
+            }
+          ]
+        },
+        "vendors": {
+          "title": "VendorsMaintenanceStateDto",
+          "allOf": [
+            {
+              "$ref": "#/definitions/VendorsMaintenanceStateDto"
+            },
+            {
+              "description": "Vendors Maintenance info"
+            }
+          ]
+        }
+      },
+      "required": [
+        "entireSystem",
+        "ios",
+        "android",
+        "features",
+        "services",
+        "vendors"
+      ]
+    },
+    "ReadSystemStateSuccess": {
+      "type": "object",
+      "properties": {
+        "malaysia": {
+          "title": "CountrySystemMaintenanceStateDto",
+          "allOf": [
+            {
+              "$ref": "#/definitions/CountrySystemMaintenanceStateDto"
+            },
+            {
+              "description": "Information about the state of the services in the country"
+            }
+          ]
+        }
+      },
+      "required": [
+        "malaysia"
+      ]
+    },
+    "ScheduleMaintenanceInput": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "description": "Maintenance scope (system wide or app wide)",
+          "enum": [
+            "SystemWide",
+            "Ios",
+            "Android"
+          ]
+        },
+        "startDate": {
+          "type": "string",
+          "description": "Maintenance start date",
+          "format": "date-time",
+          "example": "2019-02-12T02:39:47.702Z"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "Maintenance end date",
+          "format": "date-time",
+          "example": "2019-02-12T02:39:47.702Z"
+        },
+        "announcementText": {
+          "type": "string",
+          "description": "Maintenance announcement text",
+          "example": "We are updating the system at the moment. Please stay tuned for updates"
+        }
+      },
+      "required": [
+        "scope"
+      ]
+    },
+    "ScheduleMaintenanceSuccess": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "description": "Maintenance scope (system wide or app wide)",
+          "enum": [
+            "SystemWide",
+            "Ios",
+            "Android"
+          ]
+        },
+        "startDate": {
+          "type": "string",
+          "description": "Maintenance start date",
+          "format": "date-time",
+          "example": "2019-02-12T02:39:47.702Z"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "Maintenance end date",
+          "format": "date-time",
+          "example": "2019-02-12T02:39:47.702Z"
+        },
+        "announcementText": {
+          "type": "string",
+          "description": "Maintenance announcement text",
+          "example": "We are updating the system at the moment. Please stay tuned for updates"
+        },
+        "maintenancePeriodId": {
+          "type": "string",
+          "example": "de7290f9-b159-471d-88e0-1f398a2d13c2",
+          "description": "ID of the maintenance period"
+        }
+      },
+      "required": [
+        "scope",
+        "maintenancePeriodId"
+      ]
+    },
+    "CompleteMaintenanceInput": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "description": "Maintenance scope (system wide or app wide)",
+          "enum": [
+            "SystemWide",
+            "Ios",
+            "Android"
+          ]
+        }
+      },
+      "required": [
+        "scope"
+      ]
+    },
+    "CompleteMaintenanceSuccess": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "description": "Maintenance scope (system wide or app wide)",
+          "enum": [
+            "SystemWide",
+            "Ios",
+            "Android"
+          ]
+        },
+        "startDate": {
+          "type": "string",
+          "description": "Maintenance start date",
+          "format": "date-time",
+          "example": "2019-02-12T02:39:47.702Z"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "Maintenance end date",
+          "format": "date-time",
+          "example": "2019-02-12T02:39:47.702Z"
+        },
+        "announcementText": {
+          "type": "string",
+          "description": "Maintenance announcement text",
+          "example": "We are updating the system at the moment. Please stay tuned for updates"
+        }
+      },
+      "required": [
+        "scope"
+      ]
+    },
+    "ToggleVendorsMaintenanceInput": {
+      "type": "object",
+      "properties": {
+        "pos": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is POS in maintenance mode?"
+        },
+        "kiple": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is Kiple in maintenance mode?"
+        },
+        "cardtrendLms": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is Cardtrend LMS in maintenance mode?"
+        },
+        "silverstreet": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is Silverstreet in maintenance mode?"
+        }
+      },
+      "required": [
+        "pos",
+        "kiple",
+        "cardtrendLms",
+        "silverstreet"
+      ]
+    },
+    "ToggleFeaturesMaintenanceInput": {
+      "type": "object",
+      "properties": {
+        "topUpWithCard": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is top up with card in maintenance mode?"
+        },
+        "topUpWithBank": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is top up with bank in maintenance mode?"
+        },
+        "redeemLoyaltyPoints": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is loyalty points redemption in maintenance mode?"
+        }
+      },
+      "required": [
+        "topUpWithCard",
+        "topUpWithBank",
+        "redeemLoyaltyPoints"
+      ]
+    },
+    "ToggleServicesMaintenanceInput": {
+      "type": "object",
+      "properties": {
+        "accounts": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-accounts in maintenance mode?"
+        },
+        "orders": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-orders in maintenance mode?"
+        },
+        "payments": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-payments in maintenance mode?"
+        },
+        "loyalty": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-loyalty in maintenance mode?"
+        },
+        "emails": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-emails in maintenance mode?"
+        },
+        "rewards": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-rewards in maintenance mode?"
+        },
+        "storeOrders": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-store-orders in maintenance mode?"
+        },
+        "stations": {
+          "type": "boolean",
+          "example": true,
+          "description": "Is api-stations in maintenance mode?"
+        }
+      },
+      "required": [
+        "accounts",
+        "orders",
+        "payments",
+        "loyalty",
+        "emails",
+        "rewards",
+        "storeOrders",
+        "stations"
+      ]
+    }
+  }
+}

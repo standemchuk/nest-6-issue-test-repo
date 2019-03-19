@@ -1,0 +1,20 @@
+server:
+  host: 127.0.0.1
+  port: 3016
+  hostname:
+
+service:
+  name: apiMaintenance
+  baseUrl: /api/maintenance
+  docsBaseUrl: /docs/maintenance
+  apiVersion: 0.1.0
+  appVersion: 1.12.1
+
+rabbitmq:
+  urls:
+  - amqp://localhost:5672
+  queue: setel-queue
+
+mongodb:
+  maintenance:
+    uri: mongodb://127.0.0.1:27017/api-maintenance

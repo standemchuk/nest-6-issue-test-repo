@@ -1,0 +1,68 @@
+server:
+  host: SERVER_HOST
+  port: SERVER_PORT
+  hostname: SERVER_HOSTNAME
+
+service:
+  name: SERVICE_NAME
+  baseUrl: SERVICE_BASE_URL
+  docsBaseUrl: SERVICE_DOCS_BASE_URL
+  apiVersion: SERVICE_API_VERSION
+  appVersion: SERVICE_APP_VERSION
+
+rabbitmq:
+  urls: REDIS_URI
+
+mongodb:
+  maintenance:
+    uri: MONGODB_MAINTENANCE_URI
+
+centralizedLogger:
+  maskConfidential:
+    __name: MASK_CONFIDENTIAL_ENABLED
+    __format: json
+  enableConsole:
+    __name: CONSOLE_LOGGING_ENABLED
+    __format: json
+  enableInternalLog:
+    __name: INTERNAL_LOGGING_ENABLED
+    __format: json
+  enableCwl:
+    __name: CWL_LOGGING_ENABLED
+    __format: json
+  enableLogzio:
+    __name: LOGZIO_LOGGING_ENABLED
+    __format: json
+  cwl:
+    logGroupName: LOGGER_GROUP_NAME
+    submissionInterval:
+      __name: LOGGER_CTL_INTERVAL
+      __format: json
+    submissionRetryCount:
+      __name: LOGGER_CTL_RETRY
+      __format: json
+    batchSize:
+      __name: LOGGER_CTL_BATCH_SIZE
+    __format: json
+  logzio:
+    token: LOGZIO_TOKEN
+
+services:
+  apiLoyalty:
+    name: API_LOYALTY_SERVICE_NAME
+    host: API_LOYALTY_HOST
+    spec: API_LOYALTY_SPEC_PATH
+  apiEmails:
+    name: API_EMAILS_SERVICE_NAME
+    host: API_EMAILS_HOST
+    spec: API_EMAILS_SPEC_PATH
+  apiAccounts:
+    name: API_ACCOUNTS_SERVICE_NAME
+    host: API_ACCOUNTS_HOST
+    spec: API_ACCOUNTS_SPEC_PATH
+  apiPayments:
+    name: API_PAYMENTS_SERVICE_NAME
+    host: API_PAYMENTS_HOST
+    spec: API_PAYMENTS_SPEC_PATH
+
+backendAuthToken: BACKEND_AUTH_TOKEN
